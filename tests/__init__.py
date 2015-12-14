@@ -2,15 +2,16 @@ import os
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'tests.settings')
 
-from django import VERSION
+import django
 
-if VERSION >= (1, 7):
-    from django.conf import settings
-    from django.apps import apps
-
-    apps.populate(settings.INSTALLED_APPS)
+if django.VERSION >= (1, 7):
+    django.setup()
+    cmd, kwargs = 'migrate', {}
+else:
+    cmd, kwargs = 'syncdb', dict(interactive=False)
 
 from django.core.management import call_command
-call_command('syncdb', interactive=False)
+
+call_command(cmd, **kwargs)
 
 from django_markdown.tests import * # noqa
